@@ -14,6 +14,10 @@ npm install --save @pager/hapi-redis
 
 This pretty much works as a regular node-redis client, with the addition of providing an easily accessible instance via the [`server.app`](http://hapijs.com/api#serverapp) common namespace.
 
+## Options
+Options are passed transparently to the [JS Redis Client](http://redis.js.org/#api-rediscreateclient), except for:
+* ***promisify*** - Set to `true` to enable [bluebird promises](http://redis.js.org/#redis-a-nodejs-redis-client-usage-example-promises)
+
 ## Examples
 
 ```js
@@ -22,8 +26,11 @@ const server = new Hapi.Server();
 server.connection({ host: 'localhost' });
 
 const options = {
-    // node-redis config options - http://redis.js.org/#api-rediscreateclient
+  promisify: false
+  // node-redis config options - http://redis.js.org/#api-rediscreateclient
 };
+
+
 
 // Register the plugin
 server.register({
@@ -33,7 +40,7 @@ server.register({
 
     if (err) {
         console.error(err);
-    } 
+    }
     else {
         server.start(() => {
 

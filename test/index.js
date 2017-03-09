@@ -25,6 +25,20 @@ it('can be added as a plugin to Hapi', (done) => {
   });
 });
 
+it('allows the user to promisify (via Bluebird)', (done) => {
+  const server = new Hapi.Server();
+  const plugin = {
+    register: Redis,
+    options: { url: 'redis://127.0.0.1:6379/', promisify: true }
+  };
+
+  server.register(plugin, (err) => {
+    expect(err).to.not.exist();
+    expect(server.app.redis.getAsync).to.be.a.function();
+    done();
+  });
+});
+
 it('decorates the request object', (done) => {
   const server = new Hapi.Server();
   const plugin = {

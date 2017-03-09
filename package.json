@@ -25,6 +25,7 @@
     "test-cov-html": "lab -r html -o coverage.html -La code"
   },
   "dependencies": {
+    "bluebird": "^3.5.0",
     "redis": "2.x.x"
   },
   "devDependencies": {

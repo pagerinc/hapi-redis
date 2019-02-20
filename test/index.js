@@ -15,11 +15,10 @@ const internals = {};
 // Test shortcuts
 
 const lab = exports.lab = Lab.script();
-const it = lab.it;
-const expect = Code.expect;
+const { it } = lab;
+const { expect } = Code;
 
-
-it('can be added as a plugin to Hapi', (done) => {
+it('can be added as a plugin to Hapi', async () => {
 
     const server = new Hapi.Server();
     const plugin = {
@@ -27,17 +26,14 @@ it('can be added as a plugin to Hapi', (done) => {
         options: { url: 'redis://127.0.0.1:6379/' }
     };
 
-    server.register(plugin, (err) => {
+    await expect(server.register(plugin)).to.not.reject();
 
-        expect(err).to.not.exist();
-        expect(server.app.redis).to.exist();
-        expect(server.app.redis.quit).to.be.a.function();
-        done();
-    });
+    expect(server.app.redis).to.exist();
+    expect(server.app.redis.quit).to.be.a.function();
 });
 
 
-it('decorates the request object', (done) => {
+it('decorates the request object', async () => {
 
     const server = new Hapi.Server();
     const plugin = {
@@ -45,30 +41,27 @@ it('decorates the request object', (done) => {
         options: {}
     };
 
-    server.register(plugin, (err) => {
+    await expect(server.register(plugin)).to.not.reject();
 
-        expect(err).to.not.exist();
-        server.connection();
-        server.route({
-            method: 'GET',
-            path: '/',
-            handler: (request, reply) => {
+    server.connection();
+    server.route({
+        method: 'GET',
+        path: '/',
+        handler: (request, reply) => {
 
-                expect(request.redis).to.exist();
-                expect(request.redis.quit).to.be.a.function();
-                return reply({ success: true });
-            }
-        });
-
-        const request = {
-            method: 'GET',
-            url: '/'
-        };
-
-        server.inject(request, (res) => {
-
-            expect(res.result).to.equal({ success: true });
-            done();
-        });
+            expect(request.redis).to.exist();
+            expect(request.redis.quit).to.be.a.function();
+            return reply({ success: true });
+        }
     });
+
+    const request = {
+        method: 'GET',
+        url: '/'
+    };
+
+    const response = await server.inject(request);
+
+    expect(response.result).to.equal({ success: true });
 });
+

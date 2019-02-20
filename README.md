@@ -68,6 +68,17 @@ server.start(() => {
 });
 ```
 
+## Async support
+You could use next promisified methods (e.g. `const res = await getAsync(key);`)
+| Original method | Promisified method |
+| --------------- | ------------------ |
+| set             | setAsync           |
+| get             | getAsync           |
+| flushall        | flushallAsync      |
+| quit            | quitAsync          |
+| keys            | keysAsync          |
+| ttl             | ttlAsync           |
+
 ## Tests
 
 To run the test suite, first install the dependencies, then run `npm test`:

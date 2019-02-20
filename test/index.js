@@ -11,57 +11,106 @@ const Redis = require('../');
 
 const internals = {};
 
-
 // Test shortcuts
 
 const lab = exports.lab = Lab.script();
-const { it } = lab;
+const {
+    it,
+    describe,
+    beforeEach,
+    after,
+    before
+} = lab;
 const { expect } = Code;
 
-it('can be added as a plugin to Hapi', async () => {
+describe('hapi-redis', () => {
 
-    const server = new Hapi.Server();
-    const plugin = {
-        register: Redis,
-        options: { url: 'redis://127.0.0.1:6379/' }
-    };
+    before(async () => {
 
-    await expect(server.register(plugin)).to.not.reject();
+        const server = new Hapi.Server();
+        const plugin = {
+            register: Redis,
+            options: { url: 'redis://127.0.0.1:6379/' }
+        };
 
-    expect(server.app.redis).to.exist();
-    expect(server.app.redis.quit).to.be.a.function();
-});
+        await expect(server.register(plugin)).to.not.reject();
 
-
-it('decorates the request object', async () => {
-
-    const server = new Hapi.Server();
-    const plugin = {
-        register: Redis,
-        options: {}
-    };
-
-    await expect(server.register(plugin)).to.not.reject();
-
-    server.connection();
-    server.route({
-        method: 'GET',
-        path: '/',
-        handler: (request, reply) => {
-
-            expect(request.redis).to.exist();
-            expect(request.redis.quit).to.be.a.function();
-            return reply({ success: true });
-        }
+        internals.server = server;
     });
 
-    const request = {
-        method: 'GET',
-        url: '/'
-    };
+    beforeEach(async () => {
 
-    const response = await server.inject(request);
+        await internals.server.app.redis.flushallAsync();
+    });
 
-    expect(response.result).to.equal({ success: true });
+    after(async () => {
+
+        await internals.server.stop();
+
+        await internals.server.app.redis.quitAsync();
+    });
+
+    it('can be added as a plugin to Hapi', () => {
+
+        expect(internals.server.app.redis).to.exist();
+        expect(internals.server.app.redis.quit).to.be.a.function();
+        expect(internals.server.app.redis.quitAsync).to.be.a.function();
+    });
+
+
+    it('decorates the request object', async () => {
+
+        internals.server.connection();
+        internals.server.route({
+            method: 'GET',
+            path: '/',
+            handler: (request, reply) => {
+
+                expect(request.redis).to.exist();
+                expect(request.redis.quit).to.be.a.function();
+                return reply({ success: true });
+            }
+        });
+
+        const request = {
+            method: 'GET',
+            url: '/'
+        };
+
+        const response = await internals.server.inject(request);
+
+        expect(response.result).to.equal({ success: true });
+    });
+
+    // check if is a Promise via http://www.ecma-international.org/ecma-262/6.0/#sec-promise.resolve
+    it('has async methods', () => {
+
+        const { redis } = internals.server.app;
+
+        const testKey = 'pager:test';
+
+        const setAsyncResult = redis.setAsync(testKey, 1);
+        expect(redis.setAsync).to.be.a.function();
+        expect(setAsyncResult).to.be.equal(Promise.resolve(setAsyncResult));
+
+        const getAsyncResult = redis.getAsync(testKey);
+        expect(redis.getAsync).to.be.a.function();
+        expect(getAsyncResult).to.be.equal(Promise.resolve(getAsyncResult));
+
+        const flushallAsyncResult = redis.flushallAsync();
+        expect(redis.flushallAsync).to.be.a.function();
+        expect(flushallAsyncResult).to.be.equal(Promise.resolve(flushallAsyncResult));
+
+        const keysAsyncResult = redis.keysAsync(testKey);
+        expect(redis.keysAsync).to.be.a.function();
+        expect(keysAsyncResult).to.be.equal(Promise.resolve(keysAsyncResult));
+
+        const ttlAsyncResult = redis.ttlAsync(testKey);
+        expect(redis.ttlAsync).to.be.a.function();
+        expect(ttlAsyncResult).to.be.equal(Promise.resolve(ttlAsyncResult));
+
+        const quitAsyncResult = redis.quitAsync();
+        expect(redis.quitAsync).to.be.a.function();
+        expect(quitAsyncResult).to.be.equal(Promise.resolve(quitAsyncResult));
+    });
 });
-

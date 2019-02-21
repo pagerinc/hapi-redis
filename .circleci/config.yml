@@ -1,25 +1,54 @@
 version: 2
   jobs:
-    build:
-      machine: true
+    test:
+      <<: *defaults  
       steps:
         - checkout
+
         - restore_cache:
-            key: dependency-cache-{{ checksum "package.json" }}
+            keys:
+            - v1-dependencies-{{ checksum "package.json" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+        - run: npm install
         - run:
-            name: install-npm
-            command: npm install
-        - save_cache: # special step to save the dependency cache
-            key: dependency-cache-{{ checksum "package.json" }}
+            name: Run tests
+            command: npm test
+
+        - save_cache:
             paths:
-              - ./node_modules
-        - run: # run tests
-            name: test
-            command: npm run test-cov-html
-        - store_artifacts:
-            path: coverage.html
-        - store_artifacts:
-            path: coverage
-            prefix: coverage
-        - store_test_results:
-            path: coverage.html
+              - node_modules
+            key: v1-dependencies-{{ checksum "package.json" }}
+
+        - persist_to_workspace:
+            root: ~/repo
+            paths: .
+    deploy:
+      <<: *defaults
+      steps:
+        - attach_workspace:
+            at: ~/repo
+        - run:
+            name: Authenticate with registry
+            command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/repo/.npmrc
+        - run:
+            name: Publish package
+            command: npm publish
+
+  workflows:
+    version: 2
+    test-deploy:
+      jobs:
+        - test:
+            filters:
+              tags:
+                only: /^v.*/
+        - deploy:
+            requires:
+              - test
+            filters:
+              tags:
+                only: /^v.*/
+              branches:
+                ignore: /.*/

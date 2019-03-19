@@ -29,7 +29,7 @@ describe('hapi-redis', () => {
 
         const server = new Hapi.Server();
         const plugin = {
-            register: Redis,
+            plugin: Redis,
             options: { url: 'redis://127.0.0.1:6379/' }
         };
 
@@ -60,15 +60,14 @@ describe('hapi-redis', () => {
 
     it('decorates the request object', async () => {
 
-        internals.server.connection();
         internals.server.route({
             method: 'GET',
             path: '/',
-            handler: (request, reply) => {
+            handler: (request) => {
 
                 expect(request.redis).to.exist();
                 expect(request.redis.quit).to.be.a.function();
-                return reply({ success: true });
+                return { success: true };
             }
         });
 

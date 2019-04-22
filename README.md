@@ -93,6 +93,10 @@ $ npm install
 $ npm test
 ```
 
+## Versions
+ - Use 1.x.x for hapi@16
+ - Use 2.x.x for hapi@17 or later
+
 ## Acknowledgements
 
 This module borrows heavily from [hapi-ioredis].

@@ -12,7 +12,7 @@
     "url": "git://github.com/pagerinc/hapi-redis.git"
   },
   "engines": {
-    "node": ">=10.15"
+    "node": ">=v10.18.0"
   },
   "scripts": {
     "test": "lab -t 100 -La code",

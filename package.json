@@ -1,6 +1,6 @@
 {
   "name": "@pager/hapi-redis",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "A redis hapi plugin",
   "keywords": [
     "hapi",
@@ -12,19 +12,19 @@
     "url": "git://github.com/pagerinc/hapi-redis.git"
   },
   "engines": {
-    "node": ">=10.15"
+    "node": ">=10.13"
   },
   "scripts": {
-    "test": "lab -t 100 -La code",
+    "test": "lab",
     "test-cov-html": "lab -r html -o coverage.html -La code"
   },
   "dependencies": {
-    "redis": "2.x.x"
+    "redis": "2.x"
   },
   "devDependencies": {
-    "code": "5.x.x",
-    "hapi": "18.x.x",
-    "lab": "18.x.x"
+    "@hapi/code": "7.x",
+    "@hapi/hapi": "18.x",
+    "@hapi/lab": "21.x"
   },
   "main": "./lib/index.js",
   "license": "MIT"

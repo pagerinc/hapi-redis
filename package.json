@@ -24,7 +24,7 @@
   "devDependencies": {
     "@hapi/code": "7.x",
     "@hapi/hapi": "18.x",
-    "@hapi/lab": "21.x"
+    "@hapi/lab": "22.x"
   },
   "main": "./lib/index.js",
   "license": "MIT"

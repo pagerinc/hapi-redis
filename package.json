@@ -22,7 +22,7 @@
     "redis": "2.x"
   },
   "devDependencies": {
-    "@hapi/code": "7.x",
+    "@hapi/code": "8.x",
     "@hapi/hapi": "18.x",
     "@hapi/lab": "22.x"
   },

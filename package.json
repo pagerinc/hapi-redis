@@ -24,8 +24,13 @@
   "devDependencies": {
     "@hapi/code": "8.x",
     "@hapi/hapi": "19.x",
-    "@hapi/lab": "22.x"
+    "@hapi/lab": "22.x",
+    "@pager/semantic-release-config": "1.x",
+    "semantic-release": "17.x"
   },
   "main": "./lib/index.js",
-  "license": "MIT"
+  "license": "MIT",
+  "release": {
+    "extends": "@pager/semantic-release-config"
+  }
 }

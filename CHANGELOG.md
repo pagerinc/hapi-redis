@@ -1,3 +1,5 @@
+## [2.1.2](https://github.com/pagerinc/hapi-redis/compare/v2.1.1...v2.1.2) (2020-03-06)
+
 ## [2.1.1](https://github.com/pagerinc/hapi-redis/compare/v2.1.0...v2.1.1) (2020-03-05)
 
 
